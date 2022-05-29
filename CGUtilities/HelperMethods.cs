@@ -73,6 +73,10 @@ namespace CGUtilities
             ang = (angC - angB) + ((angC - angB) < 0 ? 2 * Math.PI : 0);
             return ang;
         }
+        public static double dot(Point v1, Point v2)
+        {
+            return v1.X * v2.X + v1.Y * v2.Y;
+        }
         public static double CrossProduct(Point a, Point b)
         {
             return a.X * b.Y - a.Y * b.X;
