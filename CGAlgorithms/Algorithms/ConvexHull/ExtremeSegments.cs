@@ -9,74 +9,48 @@ namespace CGAlgorithms.Algorithms.ConvexHull
 {
     public class ExtremeSegments : Algorithm
     {
+        private bool valid(int i, int j, int k)
+        {
+            HashSet<int> s = new HashSet<int>();
+            s.Add(i);
+            s.Add(j);
+            s.Add(k);
+            return s.Count == 3;
+        }
         public override void Run(List<Point> points, List<Line> lines, List<Polygon> polygons, ref List<Point> outPoints, ref List<Line> outLines, ref List<Polygon> outPolygons)
         {
-            if (points.Count == 1)
+           
+            if (points.Count < 4)
             {
-                outPoints.Add(points[0]);
+                outPoints = new List<Point>(points);
+                return;
             }
-            for (int i=0 ;i <points.Count;i++)
-            {
-                 for (int j=0 ;j <points.Count;j++)
+            HashSet<Point> setPoints = new HashSet<Point>();
+            for (int i = 0; i < points.Count; ++i)
+                for (int j = i + 1; j < points.Count; ++j)
                 {
-                     if(i!=j){
-                         Line obj=new Line(points[i],points[j]);
-                         lines.Add(obj);
-                     }
-              }
-            }
-            foreach (var line in lines)
-            {
-                bool right = false;
-                bool left = false;
+                    Enums.TurnType turn = HelperMethods.CheckTurn(new Line(points[i], points[j]), points[0]);
+                    bool ok = true;
+                    for (int k = 0; k < points.Count; ++k)
+                        if (valid(i, j, k))
+                        {
+                            Enums.TurnType curTurn = HelperMethods.CheckTurn(new Line(points[i], points[j]), points[k]);
+                            turn = (turn == Enums.TurnType.Colinear) ? curTurn : turn;
+                            if (curTurn != Enums.TurnType.Colinear && turn != curTurn)
+                            { ok = false; break; }
+                            else if (curTurn == Enums.TurnType.Colinear && !HelperMethods.PointOnLine(points[k], points[i], points[j]))
+                            { ok = false; break; }
+                        }
 
-                foreach (var point in points)
-                {
-                    var x = HelperMethods.CheckTurn(line, point);
-                    if (x == Enums.TurnType.Left)
-                    {
-                        left = true;
-                        if (right == true)
-                        {
-                            break;
-                        }
-                    }
-                    else if (x == Enums.TurnType.Right)
-                    {
-                        right = true;
-                        if (left == true)
-                        {
-                            break;
-                        }
-                    }
-                    if (point == points.Last())
-                    {
-                        if (!outPoints.Contains(line.Start))
-                        {
-                            outPoints.Add(line.Start);
-                        }
-                        if (!outPoints.Contains(line.End))
-                        {
-                            outPoints.Add(line.End);
-                        }
-                        
-                        
-                    }
-
+                    if (ok)
+                    { setPoints.Add(points[i]); setPoints.Add(points[j]); }
                 }
-
-            }   
+            outPoints = new List<Point>(setPoints);
         }
 
         public override string ToString()
         {
             return "Convex Hull - Extreme Segments";
-        }
-        public bool isUniqe(Point a, Point b, Point c)
-        {
-            if (a.Equals(b) || a.Equals(c) || b.Equals(c))
-                return false;
-            return true;
         }
     }
 }

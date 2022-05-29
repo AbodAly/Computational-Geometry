@@ -81,6 +81,10 @@ namespace CGUtilities
         {
             return a.X * b.Y - a.Y * b.X;
         }
+        public static bool PointOnLine(Point p, Point a, Point b)
+        {
+            return Math.Abs(distance(a, p) + distance(b, p) - distance(a, b)) < Constants.Epsilon;
+        }
         public static bool PointOnRay(Point p, Point a, Point b)
         {
             if (a.Equals(b)) return true;
