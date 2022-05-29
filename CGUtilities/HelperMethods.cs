@@ -57,6 +57,22 @@ namespace CGUtilities
             double diag = ab.End.Vector(c).Magnitude();
             return Math.Sqrt(diag * diag - projDistance * projDistance);
         }
+        public static double getAngle(Point a, Point b, Point c)
+        {
+            if (a.Equals(b) || b.Equals(c))
+                return 10;
+            Point VecB = a.Vector(b);
+            Point VecC = b.Vector(c);
+            double ang = Math.Acos(dot(VecB, VecC) / (VecB.Magnitude() * VecC.Magnitude()));
+            double angB = Math.Atan2(VecB.Y, VecB.X);
+            double angC = Math.Atan2(VecC.Y, VecC.X);
+            angB += (angB < 0 ? 2 * Math.PI : 0);
+            angC += (angC < 0 ? 2 * Math.PI : 0);
+            if (Math.Abs(angC - angB - ang) > 1e-6)
+                ang = ang - 2;
+            ang = (angC - angB) + ((angC - angB) < 0 ? 2 * Math.PI : 0);
+            return ang;
+        }
         public static double CrossProduct(Point a, Point b)
         {
             return a.X * b.Y - a.Y * b.X;
