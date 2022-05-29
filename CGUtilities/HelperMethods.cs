@@ -49,6 +49,14 @@ namespace CGUtilities
         {
             return Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y));
         }
+        public static double LinePointDist(Line ab, Point c)
+        {
+            Point v1 = ab.Start.Vector(ab.End);
+            Point v2 = ab.End.Vector(c);
+            double projDistance = Math.Abs(dot(v2, v1) / v1.Magnitude());
+            double diag = ab.End.Vector(c).Magnitude();
+            return Math.Sqrt(diag * diag - projDistance * projDistance);
+        }
         public static double CrossProduct(Point a, Point b)
         {
             return a.X * b.Y - a.Y * b.X;
