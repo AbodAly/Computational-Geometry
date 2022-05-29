@@ -9,44 +9,42 @@ namespace CGAlgorithms.Algorithms.ConvexHull
 {
     public class ExtremePoints : Algorithm
     {
+        private bool valid(int i, int j, int k, int l)
+        {
+            HashSet<int> s = new HashSet<int>();
+            s.Add(i);
+            s.Add(j);
+            s.Add(k);
+            s.Add(l);
+            return s.Count == 4;
+        }
         public override void Run(List<Point> points, List<Line> lines, List<Polygon> polygons, ref List<Point> outPoints, ref List<Line> outLines, ref List<Polygon> outPolygons)
         {
-            for (int i = 0; i < points.Count; i++)
+           
+            List<bool> visited = new List<bool>();
+            for (int i = 0; i < points.Count; ++i)
+                visited.Add(false);
+            for (int i = 0; i < points.Count; ++i)
             {
-                for (int j = 0; j < points.Count; j++)
-                {
-                    for (int k = 0; k < points.Count; k++)
-                    {
-                        for (int y = 0; y < points.Count; y++)
-                        {
-                            if (isUniqe(points[i], points[j], points[k]) && 
-                                isUniqe(points[i], points[j], points[y]) &&
-                                isUniqe(points[i], points[k], points[y]) &&
-                            isUniqe(points[j], points[k], points[y]))
-                            {
-                                Enums.PointInPolygon state = HelperMethods.PointInTriangle(
-                                    points[y],
-                                    points[i],
-                                    points[j],
-                                    points[k]);
-                                if (state == Enums.PointInPolygon.Inside)
-                                {
-                                    points.RemoveAt(y);
-                                }
-                            }
-                        }
-                    }
-                }
+                for (int j = 0; j < points.Count; ++j)
+                    if (!visited[j])
+                        for (int k = 0; k < points.Count; ++k)
+                            if (!visited[k])
+                                for (int l = 0; l < points.Count; ++l)
+                                    if (!visited[l] && (valid(i, j, k, l)))// defferant values i , j , k , l 
+                                    {
+                                        Enums.PointInPolygon state = HelperMethods.PointInTriangle(points[i], points[j], points[k], points[l]);
+                                        if (state == Enums.PointInPolygon.Inside || state == Enums.PointInPolygon.OnEdge)
+                                            visited[i] = true;
+                                    }
             }
-            outPoints = points;
+            outPoints = new List<Point>();
+            for (int i = 0; i < points.Count; ++i)
+                if (!visited[i])
+                    outPoints.Add(points[i]);
+            return;
         }
 
-        public bool isUniqe(Point a, Point b, Point c)
-        {
-            if (a.Equals(b) || a.Equals(c) || b.Equals(c))
-                return false;
-            return true;
-        }
         public override string ToString()
         {
             return "Convex Hull - Extreme Points";
