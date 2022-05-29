@@ -44,6 +44,11 @@ namespace CGUtilities
             else if (result > 0) return Enums.TurnType.Left;
             else return Enums.TurnType.Colinear;
         }
+
+        public static double distance(Point a, Point b)
+        {
+            return Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y));
+        }
         public static double CrossProduct(Point a, Point b)
         {
             return a.X * b.Y - a.Y * b.X;
